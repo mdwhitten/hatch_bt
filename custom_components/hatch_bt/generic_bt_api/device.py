@@ -4,6 +4,7 @@ from uuid import UUID
 import asyncio
 import logging
 from contextlib import AsyncExitStack
+import time
 
 from bleak import BleakClient
 from bleak.exc import BleakError
@@ -65,6 +66,7 @@ class HatchBTDevice:
 
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
+        time.sleep(0.25)
         response = await self.read_gatt(CHAR_FEEDBACK)
 
         self._refresh_data(response)
