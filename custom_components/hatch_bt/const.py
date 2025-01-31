@@ -23,6 +23,16 @@ class Schema(Enum):
             vol.Required("target_uuid"): cv.string
         }
     )
+    TURN_OFF = make_entity_service_schema(
+        {
+            vol.Required("dummy"): cv.string
+        }
+    )
+    TURN_ON = make_entity_service_schema(
+        {
+            vol.Required("dummy"): cv.string
+        }
+    )
 
 COLOR_GRADIENT = (254, 254, 254)  # setting this color turns on Gradient mode
 CHAR_TX = "02240002-5efd-47eb-9c1a-de53f7a2b232"

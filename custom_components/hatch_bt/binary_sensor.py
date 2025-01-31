@@ -28,6 +28,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service("write_gatt", Schema.WRITE_GATT.value, "write_gatt")
     platform.async_register_entity_service("read_gatt", Schema.READ_GATT.value, "read_gatt")
+    platform.async_register_entity_service("turn_off", None, "turn_off")
+    platform.async_register_entity_service("turn_on", None, "turn_on")
 
 
 class GenericBTBinarySensor(GenericBTEntity, BinarySensorEntity):
@@ -47,16 +49,16 @@ class GenericBTBinarySensor(GenericBTEntity, BinarySensorEntity):
         await self._device.write_gatt(target_uuid, data)
         self.async_write_ha_state()
 
-    async def TurnOff(self):
+    async def turn_off(self):
         command = "SI{:02x}".format(0)
-        await self._device.write_gatt_2(self, CHAR_TX, command)
-        await self._device.read_gatt(self, CHAR_FEEDBACK)
+        await self._device.write_gatt_2(CHAR_TX, command)
+        await self._device.read_gatt(CHAR_FEEDBACK)
         self.async_write_ha_state()
 
-    async def TurnOff(self):
+    async def turn_on(self):
         command = "SI{:02x}".format(1)
-        await self._device.write_gatt_2(self, CHAR_TX, command)
-        await self._device.read_gatt(self, CHAR_FEEDBACK)
+        await self._device.write_gatt_2(CHAR_TX, command)
+        await self._device.read_gatt(CHAR_FEEDBACK)
         self.async_write_ha_state()
 
     async def read_gatt(self, target_uuid):
