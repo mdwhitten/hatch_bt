@@ -1,4 +1,4 @@
-"""Config flow for GenericBT integration."""
+"""Config flow for Hatch BT integration."""
 from __future__ import annotations
 
 import logging
@@ -18,7 +18,7 @@ from .generic_bt_api.device import GenericBTDevice
 _LOGGER = logging.getLogger(__name__)
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Generic BT."""
+    """Handle a config flow for Hatch BT."""
 
     VERSION = 1
 

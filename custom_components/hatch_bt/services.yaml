@@ -4,7 +4,7 @@ write_gatt:
   target:
     entity:
       domain: binary_sensor
-      integration: generic_bt
+      integration: hatch_bt
   fields:
     target_uuid:
       name: Target UUID
@@ -24,7 +24,35 @@ read_gatt:
   target:
     entity:
       domain: binary_sensor
-      integration: generic_bt
+      integration: hatch_bt
+  fields:
+    target_uuid:
+      name: Target UUID
+      description: Target UUID
+      required: true
+      selector:
+        text:
+turn_on:
+  name: Turn ON
+  description: Turn ON
+  target:
+    entity:
+      domain: binary_sensor
+      integration: hatch_bt
+  fields:
+    target_uuid:
+      name: Target UUID
+      description: Target UUID
+      required: true
+      selector:
+        text:
+turn_off:
+  name: Turn OFF
+  description: Turn OFF
+  target:
+    entity:
+      domain: binary_sensor
+      integration: hatch_bt
   fields:
     target_uuid:
       name: Target UUID
