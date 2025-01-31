@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from .generic_bt_api.device import *
 
 from homeassistant.components.bluetooth.passive_update_coordinator import PassiveBluetoothCoordinatorEntity
 from homeassistant.helpers import device_registry as dr
@@ -13,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 class GenericBTEntity(PassiveBluetoothCoordinatorEntity[GenericBTCoordinator]):
     """Generic entity encapsulating common features of Generic BT device."""
 
-    _device: GenericBTDevice
+    _device: HatchBTDevice
     _attr_has_entity_name = True
 
     def __init__(self, coordinator: GenericBTCoordinator) -> None:

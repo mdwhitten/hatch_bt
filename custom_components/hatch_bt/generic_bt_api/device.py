@@ -7,11 +7,12 @@ from contextlib import AsyncExitStack
 
 from bleak import BleakClient
 from bleak.exc import BleakError
+from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class GenericBTDevice:
+class HatchBTDevice:
     """Generic BT Device Class"""
     def __init__(self, ble_device):
         self._ble_device = ble_device
@@ -23,7 +24,7 @@ class GenericBTDevice:
         pass
 
     async def stop(self):
-            pass
+        pass
 
     @property
     def connected(self):
@@ -37,21 +38,15 @@ class GenericBTDevice:
                     self._client = await self._client_stack.enter_async_context(BleakClient(self._ble_device, timeout=30))
                 except asyncio.TimeoutError as exc:
                     _LOGGER.debug("Timeout on connect", exc_info=True)
-                    raise IdealLedTimeout("Timeout on connect") from exc
+                    raise
                 except BleakError as exc:
                     _LOGGER.debug("Error on connect", exc_info=True)
-                    raise IdealLedBleakError("Error on connect") from exc
+                    raise
             else:
                 _LOGGER.debug("Connection reused")
 
-    async def write_gatt(self, target_uuid, data):
-        await self.get_client()
-        uuid_str = "{" + target_uuid + "}"
-        uuid = UUID(uuid_str)
-        data_as_bytes = bytearray.fromhex(data)
-        await self._client.write_gatt_char(uuid, data_as_bytes, True)
 
-    async def write_gatt_2(self, target_uuid, data):
+    async def write_gatt(self, target_uuid, data):
         await self.get_client()
         uuid_str = "{" + target_uuid + "}"
         uuid = UUID(uuid_str)
@@ -66,6 +61,67 @@ class GenericBTDevice:
         data = await self._client.read_gatt_char(uuid)
         _LOGGER.debug(f"Read {data} from {target_uuid}")
         return data
+    
+
+    async def send_command(self, data) -> None:
+        await self.write_gatt(CHAR_TX, data)
+        response = await self.read_gatt(CHAR_FEEDBACK)
+
+        self._refresh_data(response)
 
     def update_from_advertisement(self, advertisement):
         pass
+
+    def _refresh_data(self, response_data) -> None:
+        """ Request updated data from the device and set the local attributes. """
+        response = [hex(x) for x in response_data]
+
+        # Make sure the data is where we think it is
+        assert response[5] == "0x43"  # color
+        assert response[10] == "0x53"  # audio
+        assert response[13] == "0x50"  # power
+
+        red, green, blue, brightness = [int(x, 16) for x in response[6:10]]
+
+        sound = PyHatchBabyRestSound(int(response[11], 16))
+
+        volume = int(response[12], 16)
+
+        power = not bool(int("11000000", 2) & int(response[14], 16))
+
+        self.color = (red, green, blue)
+        self.brightness = brightness
+        self.sound = sound
+        self.volume = volume
+        self.power = power
+
+
+    async def power_on(self):
+        command = "SI{:02x}".format(1)
+        await self.send_command(command)
+
+    async def power_off(self):
+        command = "SI{:02x}".format(0)
+        await self.send_command(command)
+
+    def set_sound(self, sound):
+        command = "SN{:02x}".format(sound)
+        self.send_command(command)
+
+    def set_volume(self, volume):
+        command = "SV{:02x}".format(volume)
+        self.send_command(command)
+
+    def set_color(self, red: int, green: int, blue: int):
+        # self._refresh_data()
+
+        command = "SC{:02x}{:02x}{:02x}{:02x}".format(red, green, blue, self.brightness)
+        self.send_command(command)
+
+    def set_brightness(self, brightness: int):
+        # self._refresh_data()
+
+        command = "SC{:02x}{:02x}{:02x}{:02x}".format(
+            self.color[0], self.color[1], self.color[2], brightness
+        )
+        self.send_command(command)

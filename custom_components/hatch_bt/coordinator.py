@@ -10,7 +10,7 @@ from homeassistant.components.bluetooth.active_update_coordinator import ActiveB
 from homeassistant.core import CoreState, HomeAssistant, callback
 from bleak.backends.device import BLEDevice
 
-from .generic_bt_api.device import GenericBTDevice
+from .generic_bt_api.device import HatchBTDevice
 from .const import DOMAIN, DEVICE_STARTUP_TIMEOUT_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 class GenericBTCoordinator(ActiveBluetoothDataUpdateCoordinator[None]):
     """Class to manage fetching generic bt data."""
 
-    def __init__(self, hass: HomeAssistant, logger: logging.Logger, ble_device: BLEDevice, device: GenericBTDevice, device_name: str, base_unique_id: str, connectable: bool) -> None:
+    def __init__(self, hass: HomeAssistant, logger: logging.Logger, ble_device: BLEDevice, device: HatchBTDevice, device_name: str, base_unique_id: str, connectable: bool) -> None:
         """Initialize global generic bt data updater."""
         super().__init__(hass=hass, logger=logger, address=ble_device.address, needs_poll_method=self._needs_poll, poll_method=self._async_update, mode=bluetooth.BluetoothScanningMode.ACTIVE, connectable=connectable)
         self.ble_device = ble_device
