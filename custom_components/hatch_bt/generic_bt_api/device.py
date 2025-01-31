@@ -36,7 +36,7 @@ class HatchBTDevice:
             if not self._client:
                 _LOGGER.debug("Connecting")
                 try:
-                    self._client = await self._client_stack.enter_async_context(BleakClient(self._ble_device, timeout=30))
+                    self._client = await self._client_stack.enter_async_context(BleakClient(self._ble_device, timeout=60))
                 except asyncio.TimeoutError as exc:
                     _LOGGER.debug("Timeout on connect", exc_info=True)
                     raise
