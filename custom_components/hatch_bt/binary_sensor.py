@@ -12,6 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, Schema
 from .coordinator import GenericBTCoordinator
 from .entity import GenericBTEntity
+from .const import *
 
 
 # Initialize the logger
@@ -44,6 +45,18 @@ class GenericBTBinarySensor(GenericBTEntity, BinarySensorEntity):
 
     async def write_gatt(self, target_uuid, data):
         await self._device.write_gatt(target_uuid, data)
+        self.async_write_ha_state()
+
+    async def TurnOff(self):
+        command = "SI{:02x}".format(0)
+        await self._device.write_gatt_2(self, CHAR_TX, command)
+        await self._device.read_gatt(self, CHAR_FEEDBACK)
+        self.async_write_ha_state()
+
+    async def TurnOff(self):
+        command = "SI{:02x}".format(1)
+        await self._device.write_gatt_2(self, CHAR_TX, command)
+        await self._device.read_gatt(self, CHAR_FEEDBACK)
         self.async_write_ha_state()
 
     async def read_gatt(self, target_uuid):
