@@ -21,6 +21,11 @@ class HatchBTDevice:
         self._client_stack = AsyncExitStack()
         self._lock = asyncio.Lock()
 
+        self._power = None
+        self._volume = None
+        self._sound = None
+        self._brightness = None
+
     async def update(self):
         pass
 
@@ -30,6 +35,10 @@ class HatchBTDevice:
     @property
     def connected(self):
         return not self._client is None
+
+    @property
+    def power(self):
+        return self._power
 
     async def get_client(self):
         async with self._lock:
@@ -66,11 +75,10 @@ class HatchBTDevice:
 
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
-        time.sleep(0.25)
+        await asyncio.sleep(.01)
         response = await self.read_gatt(CHAR_FEEDBACK)
 
         self._refresh_data(response)
-
     def update_from_advertisement(self, advertisement):
         pass
 
@@ -95,7 +103,7 @@ class HatchBTDevice:
         self.brightness = brightness
         self.sound = sound
         self.volume = volume
-        self.power = power
+        self._power = power
 
 
     async def power_on(self):

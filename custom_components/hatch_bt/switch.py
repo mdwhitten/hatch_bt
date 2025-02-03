@@ -45,3 +45,16 @@ class HatchBTSwitch(GenericBTEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs):
         await self._device.power_off()
         self.async_write_ha_state()
+
+    async def async_toggle(self, **kwargs):
+        if self._device.power:
+            await self._device.power_off()
+        else:
+            await self._device.power_on()
+
+        self.async_write_ha_state()
+
+    @property
+    def is_on(self) -> str:
+        """Return the display name of this light."""
+        return self._device.power
