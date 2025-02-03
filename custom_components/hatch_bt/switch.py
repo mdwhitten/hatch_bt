@@ -41,10 +41,12 @@ class HatchBTSwitch(GenericBTEntity, SwitchEntity):
         """Turn the entity on."""
         await self._device.power_on()
         self.async_write_ha_state()
+        _LOGGER.debug(f"After writing async state, power is {self._device.power}")
 
     async def async_turn_off(self, **kwargs):
         await self._device.power_off()
         self.async_write_ha_state()
+        _LOGGER.debug(f"After writing async state, power is {self._device.power}")
 
     async def async_toggle(self, **kwargs):
         if self._device.power:
@@ -53,6 +55,7 @@ class HatchBTSwitch(GenericBTEntity, SwitchEntity):
             await self._device.power_on()
 
         self.async_write_ha_state()
+        _LOGGER.debug(f"After writing async state, power is {self._device.power}")
 
     @property
     def is_on(self) -> str:
