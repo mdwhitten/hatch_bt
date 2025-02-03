@@ -27,7 +27,8 @@ class HatchBTDevice:
         self._brightness = None
 
     async def update(self):
-        pass
+        response = await self.read_gatt(CHAR_FEEDBACK)
+        self._refresh_data(response)
 
     async def stop(self):
         pass
@@ -99,11 +100,17 @@ class HatchBTDevice:
 
         power = not bool(int("11000000", 2) & int(response[14], 16))
 
-        self.color = (red, green, blue)
-        self.brightness = brightness
-        self.sound = sound
-        self.volume = volume
+        self._color = (red, green, blue)
+        self._brightness = brightness
+        self._sound = sound
+        self._volume = volume
         self._power = power
+
+        _LOGGER.debug(f"Power state is {self._power}")
+        _LOGGER.debug(f"Volume state is {self._volume}")
+        _LOGGER.debug(f"Sound state is {self._sound}")
+        _LOGGER.debug(f"Brightness state is {self._brightness}")
+        _LOGGER.debug(f"Color state is {self._color}")
 
 
     async def power_on(self):
