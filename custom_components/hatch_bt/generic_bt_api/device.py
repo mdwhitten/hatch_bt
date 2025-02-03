@@ -76,11 +76,11 @@ class HatchBTDevice:
 
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
-        await asyncio.sleep(.25)
+        await asyncio.sleep(1)
         response = await self.read_gatt(CHAR_FEEDBACK)
 
         self._refresh_data(response)
-        
+
     def update_from_advertisement(self, advertisement):
         pass
 
