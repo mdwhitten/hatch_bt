@@ -36,8 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not device.connected:
         raise ConfigEntryNotReady(f"Failed to connect to: {ble_device.address}")
 
-    coordinator = HatchBTUpdateCoordinator(hass, _LOGGER, ble_device=ble_device, device=device, device_name=entry.title,
-                                           unique_id=entry.unique_id)
+    coordinator = HatchBTUpdateCoordinator(hass, _LOGGER, device, ble_device, entry.title, entry.unique_id)
 
     await coordinator.async_config_entry_first_refresh()
 

@@ -30,8 +30,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class HatchBTUpdateCoordinator(DataUpdateCoordinator):
     def __init__(
-        self, hass: HomeAssistant, logger: logging.Logger, unique_id: str | None, device: HatchBTDevice, ble_device: BLEDevice,
-            device_name: str,
+        self, hass: HomeAssistant, logger: logging.Logger, device: HatchBTDevice, ble_device: BLEDevice,
+            device_name: str, base_unique_id: str | None
     ) -> None:
         super().__init__(
             hass,
@@ -39,10 +39,10 @@ class HatchBTUpdateCoordinator(DataUpdateCoordinator):
             name="hatchbabyrest",
             update_interval=timedelta(seconds=30),
         )
-        self.unique_id = unique_id
         self._device = device
         self.ble_device = ble_device
         self.device_name = device_name
+        self.base_unique_id = base_unique_id
 
     async def _async_update_data(self):
         try:
