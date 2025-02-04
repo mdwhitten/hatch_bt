@@ -27,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up Generic BT device based on a config entry."""
     coordinator: GenericBTCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([HatchBTLight(coordinator)])
+    async_add_entities([HatchBTLight(coordinator)], update_before_add=True)
 
 
 class HatchBTLight(GenericBTEntity, LightEntity):

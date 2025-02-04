@@ -23,7 +23,7 @@ PARALLEL_UPDATES = 0
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up Generic BT device based on a config entry."""
     coordinator: GenericBTCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([HatchBTSwitch(coordinator)])
+    async_add_entities([HatchBTSwitch(coordinator)],  update_before_add=True)
 
 class HatchBTSwitch(GenericBTEntity, SwitchEntity):
 
