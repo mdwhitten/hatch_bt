@@ -42,11 +42,17 @@ class HatchBTSwitch(HatchBTEntity, SwitchEntity):
         """Turn the entity on."""
         await self._device.power_on()
 
+        # Update this individual state, then the rest of the states
+        self.async_write_ha_state()
+
         # Update the data
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs):
         await self._device.power_off()
+
+        # Update this individual state, then the rest of the states
+        self.async_write_ha_state()
 
         # Update the data
         await self.coordinator.async_request_refresh()
@@ -56,6 +62,9 @@ class HatchBTSwitch(HatchBTEntity, SwitchEntity):
             await self._device.power_off()
         else:
             await self._device.power_on()
+
+        # Update this individual state, then the rest of the states
+        self.async_write_ha_state()
 
         # Update the data
         await self.coordinator.async_request_refresh()

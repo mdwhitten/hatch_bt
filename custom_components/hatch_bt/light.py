@@ -79,18 +79,25 @@ class HatchBTLight(HatchBTEntity, LightEntity):
         """
         color = kwargs.get(ATTR_RGB_COLOR, self.rgb_color)
         brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        poweredOn = False
 
         await self._device.set_color_brightness(color, brightness)
         if not self._device.power:
             await self._device.power_on()
+            poweredOn = True
 
-        # Update the data
-        await self.coordinator.async_request_refresh()
+        # Update this individual state, then the rest of the states
+        self.async_write_ha_state()
+
+        if poweredOn:
+            # Update the rest of the data
+            await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
         if self._device.power:
             await self._device.power_off()
-
-        # Update the data
-        await self.coordinator.async_request_refresh()
+            # Update this individual state, then the rest of the states
+            self.async_write_ha_state()
+            # Update the data
+            await self.coordinator.async_request_refresh()
