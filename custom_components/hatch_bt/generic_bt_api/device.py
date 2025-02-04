@@ -27,6 +27,8 @@ class HatchBTDevice:
         self._brightness = None
         self._color = None
 
+
+
     async def update(self):
         _LOGGER.debug("Update called")
         response = await self.read_gatt(CHAR_FEEDBACK)
@@ -60,11 +62,18 @@ class HatchBTDevice:
         return self._volume
 
     async def get_client(self):
+
+        def disconnected_callback(client):
+            _LOGGER.info("Disconnected callback called!")
+            self._client = None
+
         async with self._lock:
             if not self._client:
                 _LOGGER.debug("Connecting")
                 try:
-                    self._client = await self._client_stack.enter_async_context(BleakClient(self._ble_device, timeout=60))
+                    self._client = await self._client_stack.enter_async_context(
+                        BleakClient(self._ble_device, timeout=60, disconnected_callback=disconnected_callback))
+                    _LOGGER.debug("Made new connection")
                 except asyncio.TimeoutError as exc:
                     _LOGGER.debug("Timeout on connect", exc_info=True)
                     raise
@@ -73,6 +82,8 @@ class HatchBTDevice:
                     raise
             else:
                 _LOGGER.debug("Connection reused")
+
+
 
     async def disconnect(self):
         async with self._lock:
