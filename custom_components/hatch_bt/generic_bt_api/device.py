@@ -56,6 +56,7 @@ class HatchBTDevice:
                 _LOGGER.debug("Connecting")
                 try:
                     self._client = await self._client_stack.enter_async_context(BleakClient(self._ble_device, timeout=60))
+                    await self.refresh_data()
                 except asyncio.TimeoutError as exc:
                     _LOGGER.debug("Timeout on connect", exc_info=True)
                     raise
@@ -64,6 +65,7 @@ class HatchBTDevice:
                     raise
             else:
                 _LOGGER.debug("Connection reused")
+                await self.refresh_data()
 
 
     async def write_gatt(self, target_uuid, data):
@@ -86,14 +88,14 @@ class HatchBTDevice:
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
         await asyncio.sleep(0.75)
-        response = await self.read_gatt(CHAR_FEEDBACK)
-
-        self._refresh_data(response)
+        await self.refresh_data()
 
     def update_from_advertisement(self, advertisement):
         pass
 
-    def _refresh_data(self, response_data) -> None:
+    async def refresh_data(self) -> None:
+        response_data = await self.read_gatt(CHAR_FEEDBACK)
+
         """ Request updated data from the device and set the local attributes. """
         response = [hex(x) for x in response_data]
 

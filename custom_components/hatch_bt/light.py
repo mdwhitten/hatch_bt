@@ -76,8 +76,8 @@ class HatchBTLight(GenericBTEntity, LightEntity):
         You can skip the brightness part if your light does not support
         brightness control.
         """
-        color = kwargs.get(ATTR_RGB_COLOR, (255, 255, 255))
-        brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
+        color = kwargs.get(ATTR_RGB_COLOR, self.rgb_color)
+        brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
 
         await self._device.set_color_brightness(color, brightness)
         if not self._device.power:
