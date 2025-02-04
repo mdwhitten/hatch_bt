@@ -36,6 +36,10 @@ class HatchBTMediaPlayer(HatchBTEntity, MediaPlayerEntity):
         _previous_sound = self._device.sound
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     def supported_features(self) -> MediaPlayerEntityFeature:
         return (
             MediaPlayerEntityFeature.PLAY
@@ -67,13 +71,12 @@ class HatchBTMediaPlayer(HatchBTEntity, MediaPlayerEntity):
         self.async_write_ha_state()
 
     @property
-    async def state(self) -> MediaPlayerState | None:
-
+    def state(self) -> MediaPlayerState | None:
         if self._device.power is False:
             return MediaPlayerState.OFF
 
         if self._device.sound == PyHatchBabyRestSound.none:
-            return MediaPlayerState.STANDBY
+            return MediaPlayerState.IDLE
 
         return MediaPlayerState.PLAYING
 
@@ -95,7 +98,7 @@ class HatchBTMediaPlayer(HatchBTEntity, MediaPlayerEntity):
             await self._device.set_sound(previous_sound)
         self.async_write_ha_state()
 
-    async def _async_turn_off(self) -> None:
+    async def async_turn_off(self) -> None:
         if self._device.power:
             await self._device.power_off()
             # Update this individual state, then the rest of the states
@@ -103,7 +106,7 @@ class HatchBTMediaPlayer(HatchBTEntity, MediaPlayerEntity):
             # Update the data
             await self.coordinator.async_request_refresh()
 
-    async def _async_turn_on(self) -> None:
+    async def async_turn_on(self) -> None:
         if not self._device.power:
             await self._device.power_on()
             # Update this individual state, then the rest of the states
