@@ -42,6 +42,9 @@ class GenericBTCoordinator(ActiveBluetoothDataUpdateCoordinator[None]):
                 )
             )
         )
+    async def _async_setup(self):
+        _LOGGER.debug("Coordinator setup called")
+        await self.device.get_client()
 
     async def _async_update(self, service_info: bluetooth.BluetoothServiceInfoBleak) -> None:
         """Poll the device."""

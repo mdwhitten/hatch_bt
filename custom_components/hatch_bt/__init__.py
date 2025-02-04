@@ -33,6 +33,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not await coordinator.async_wait_ready():
         raise ConfigEntryNotReady(f"{address} is not advertising state")
 
+    await coordinator.async_config_entry_first_refresh()
+
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
