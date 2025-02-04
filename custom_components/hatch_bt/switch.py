@@ -25,11 +25,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     coordinator: GenericBTCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([HatchBTSwitch(coordinator)])
 
-"""     platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service("turn_off", None, "turn_off")
-    platform.async_register_entity_service("turn_on", None, "turn_on") """
-
-
 class HatchBTSwitch(GenericBTEntity, SwitchEntity):
 
     def __init__(self, coordinator: GenericBTCoordinator) -> None:

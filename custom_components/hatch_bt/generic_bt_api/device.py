@@ -25,6 +25,7 @@ class HatchBTDevice:
         self._volume = None
         self._sound = None
         self._brightness = None
+        self._color = None
 
     async def update(self):
         response = await self.read_gatt(CHAR_FEEDBACK)
@@ -40,6 +41,14 @@ class HatchBTDevice:
     @property
     def power(self):
         return self._power
+    
+    @property
+    def brightness(self):
+        return self._brightness
+    
+    @property
+    def color(self):
+        return self.color
 
     async def get_client(self):
         async with self._lock:
@@ -76,7 +85,7 @@ class HatchBTDevice:
 
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.75)
         response = await self.read_gatt(CHAR_FEEDBACK)
 
         self._refresh_data(response)
@@ -122,24 +131,28 @@ class HatchBTDevice:
         command = "SI{:02x}".format(0)
         await self.send_command(command)
 
-    def set_sound(self, sound):
+    async def set_sound(self, sound):
         command = "SN{:02x}".format(sound)
-        self.send_command(command)
+        await self.send_command(command)
 
-    def set_volume(self, volume):
+    async def set_volume(self, volume):
         command = "SV{:02x}".format(volume)
-        self.send_command(command)
+        await self.send_command(command)
 
-    def set_color(self, red: int, green: int, blue: int):
+    async def set_color_brightness(self, color, brightness):
+        command = "SC{:02x}{:02x}{:02x}{:02x}".format(color[0], color[1], color[2], brightness)
+        await self.send_command(command)
+
+    async def set_color(self, red: int, green: int, blue: int):
         # self._refresh_data()
 
         command = "SC{:02x}{:02x}{:02x}{:02x}".format(red, green, blue, self.brightness)
-        self.send_command(command)
+        await self.send_command(command)
 
-    def set_brightness(self, brightness: int):
+    async def set_brightness(self, brightness: int):
         # self._refresh_data()
 
         command = "SC{:02x}{:02x}{:02x}{:02x}".format(
             self.color[0], self.color[1], self.color[2], brightness
         )
-        self.send_command(command)
+        await self.send_command(command)
