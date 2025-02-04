@@ -51,6 +51,14 @@ class HatchBTDevice:
     def color(self):
         return self._color
 
+    @property
+    def sound(self) -> PyHatchBabyRestSound:
+        return self._sound
+
+    @property
+    def volume(self):
+        return self._volume
+
     async def get_client(self):
         async with self._lock:
             if not self._client:
