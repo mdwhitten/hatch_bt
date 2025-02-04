@@ -14,11 +14,11 @@ from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
-
+from typing import Any
 
 from .const import DOMAIN, Schema
-from .coordinator import GenericBTCoordinator
-from .entity import GenericBTEntity
+from .coordinator import HatchBTUpdateCoordinator
+from .entity import HatchBTEntity
 from .const import *
 from .generic_bt_api.device import *
 
@@ -26,14 +26,14 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up Generic BT device based on a config entry."""
-    coordinator: GenericBTCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: HatchBTUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([HatchBTLight(coordinator)], update_before_add=True)
 
 
-class HatchBTLight(GenericBTEntity, LightEntity):
+class HatchBTLight(HatchBTEntity, LightEntity):
     """Representation of an Awesome Light."""
 
-    def __init__(self, coordinator: GenericBTCoordinator) -> None:
+    def __init__(self, coordinator: HatchBTUpdateCoordinator) -> None:
         """Initialize the Device."""
         super().__init__(coordinator)
 
@@ -63,7 +63,7 @@ class HatchBTLight(GenericBTEntity, LightEntity):
 
     @property
     def rgb_color(self):
-        return self._device._color
+        return self._device.color
 
     @property
     def is_on(self) -> bool | None:
@@ -90,11 +90,3 @@ class HatchBTLight(GenericBTEntity, LightEntity):
         if self._device.power:
             await self._device.power_off()
         self.async_write_ha_state()
-
-    def update(self) -> None:
-        _LOGGER.debug("Update for light entity called")
-        """Fetch new state data for this light.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._device.update()

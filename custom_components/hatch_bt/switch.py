@@ -10,8 +10,8 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, Schema
-from .coordinator import GenericBTCoordinator
-from .entity import GenericBTEntity
+from .coordinator import HatchBTUpdateCoordinator
+from .entity import HatchBTEntity
 from .const import *
 from .generic_bt_api.device import *
 
@@ -22,12 +22,12 @@ PARALLEL_UPDATES = 0
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up Generic BT device based on a config entry."""
-    coordinator: GenericBTCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: HatchBTUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([HatchBTSwitch(coordinator)],  update_before_add=True)
 
-class HatchBTSwitch(GenericBTEntity, SwitchEntity):
+class HatchBTSwitch(HatchBTEntity, SwitchEntity):
 
-    def __init__(self, coordinator: GenericBTCoordinator) -> None:
+    def __init__(self, coordinator: HatchBTUpdateCoordinator) -> None:
         """Initialize the Device."""
         super().__init__(coordinator)
 
@@ -50,9 +50,8 @@ class HatchBTSwitch(GenericBTEntity, SwitchEntity):
             await self._device.power_on()
 
         self.async_write_ha_state()
-        _LOGGER.debug(f"After writing async state, power is {self._device.power}")
 
     @property
-    def is_on(self) -> str:
+    def is_on(self) -> bool:
         """Return the display name of this light."""
         return self._device.power

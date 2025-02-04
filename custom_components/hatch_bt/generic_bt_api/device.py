@@ -66,7 +66,20 @@ class HatchBTDevice:
             else:
                 _LOGGER.debug("Connection reused")
 
-
+    async def disconnect(self):
+        async with self._lock:
+            if self._client:
+                _LOGGER.debug("Disconnecting")
+                try:
+                    await self._client.disconnect()
+                except asyncio.TimeoutError as exc:
+                    _LOGGER.debug("Timeout on connect", exc_info=True)
+                    raise
+                except BleakError as exc:
+                    _LOGGER.debug("Error on connect", exc_info=True)
+                    raise
+            else:
+                _LOGGER.debug("Not connected, so nothing to disconnect")
     async def write_gatt(self, target_uuid, data):
         await self.get_client()
         uuid_str = "{" + target_uuid + "}"
@@ -87,12 +100,7 @@ class HatchBTDevice:
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
         await asyncio.sleep(0.75)
-        response = await self.read_gatt(CHAR_FEEDBACK)
-
-        self._refresh_data(response)
-
-    def update_from_advertisement(self, advertisement):
-        pass
+        await self.update()
 
     def _refresh_data(self, response_data) -> None:
         """ Request updated data from the device and set the local attributes. """
@@ -122,7 +130,6 @@ class HatchBTDevice:
         _LOGGER.debug(f"Sound state is {self._sound}")
         _LOGGER.debug(f"Brightness state is {self._brightness}")
         _LOGGER.debug(f"Color state is {self._color}")
-
 
     async def power_on(self):
         command = "SI{:02x}".format(1)
