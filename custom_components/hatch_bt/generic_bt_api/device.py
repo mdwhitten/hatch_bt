@@ -99,8 +99,8 @@ class HatchBTDevice:
 
     async def send_command(self, data) -> None:
         await self.write_gatt(CHAR_TX, data)
-        await asyncio.sleep(0.75)
-        await self.update()
+        #await asyncio.sleep(0.75)
+        #await self.update()
 
     def _refresh_data(self, response_data) -> None:
         """ Request updated data from the device and set the local attributes. """

@@ -83,10 +83,14 @@ class HatchBTLight(HatchBTEntity, LightEntity):
         await self._device.set_color_brightness(color, brightness)
         if not self._device.power:
             await self._device.power_on()
-        self.async_write_ha_state()
+
+        # Update the data
+        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
         if self._device.power:
             await self._device.power_off()
-        self.async_write_ha_state()
+
+        # Update the data
+        await self.coordinator.async_request_refresh()
