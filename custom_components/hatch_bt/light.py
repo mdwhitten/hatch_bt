@@ -37,7 +37,7 @@ class HatchBTLight(HatchBTEntity, LightEntity):
         """Initialize the Device."""
         super().__init__(coordinator)
 
-        self._name = "Hatch Bluetooth Light"
+        self._name = "Light"
 
     @property
     def name(self) -> str:

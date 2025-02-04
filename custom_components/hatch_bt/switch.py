@@ -31,6 +31,12 @@ class HatchBTSwitch(HatchBTEntity, SwitchEntity):
         """Initialize the Device."""
         super().__init__(coordinator)
 
+        self._name = "Power"
+
+    @property
+    def name(self) -> str:
+        """Return the display name of this light."""
+        return self._name
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
