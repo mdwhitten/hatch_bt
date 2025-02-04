@@ -67,6 +67,7 @@ class HatchBTLight(GenericBTEntity, LightEntity):
 
     @property
     def is_on(self) -> bool | None:
+        _LOGGER.debug("Power property read")
         """Return true if light is on."""
         return self._device.power
 
@@ -91,6 +92,7 @@ class HatchBTLight(GenericBTEntity, LightEntity):
         self.async_write_ha_state()
 
     def update(self) -> None:
+        _LOGGER.debug("Update for light entity called")
         """Fetch new state data for this light.
 
         This is the only method that should fetch new data for Home Assistant.

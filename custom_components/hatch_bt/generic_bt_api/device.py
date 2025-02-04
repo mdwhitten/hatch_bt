@@ -28,6 +28,7 @@ class HatchBTDevice:
         self._color = None
 
     async def update(self):
+        _LOGGER.debug("Update called")
         response = await self.read_gatt(CHAR_FEEDBACK)
         self._refresh_data(response)
 
@@ -48,7 +49,7 @@ class HatchBTDevice:
     
     @property
     def color(self):
-        return self.color
+        return self._color
 
     async def get_client(self):
         async with self._lock:
