@@ -8,7 +8,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .coordinator import HatchBTUpdateCoordinator
 from homeassistant.core import callback
-from .generic_bt_api.device import HatchBTDevice
+from .hatch_bt_device.device import HatchBTDevice
 
 _LOGGER = logging.getLogger(__name__)
 

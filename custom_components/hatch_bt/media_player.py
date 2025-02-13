@@ -8,11 +8,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from pyhatchbabyrest.constants import PyHatchBabyRestSound
 
 from .entity import HatchBTEntity
 from .coordinator import HatchBTUpdateCoordinator
 from .const import DOMAIN
+from .hatch_bt_device.const import PyHatchBabyRestSound
 
 
 async def async_setup_entry(

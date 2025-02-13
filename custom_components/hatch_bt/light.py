@@ -20,7 +20,7 @@ from .const import DOMAIN, Schema
 from .coordinator import HatchBTUpdateCoordinator
 from .entity import HatchBTEntity
 from .const import *
-from .generic_bt_api.device import *
+from .hatch_bt_device.device import *
 
 _LOGGER = logging.getLogger(__name__)
 

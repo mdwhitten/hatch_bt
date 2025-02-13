@@ -21,9 +21,9 @@ from homeassistant.helpers.update_coordinator import (
     UpdateFailed,
 )
 
-from .generic_bt_api.device import HatchBTDevice
+from .hatch_bt_device.device import HatchBTDevice
 
-# from .generic_bt_api.device import HatchBTDevice
+# from .hatch_bt_device.device import HatchBTDevice
 from .const import DOMAIN, DEVICE_STARTUP_TIMEOUT_SECONDS
 
 _LOGGER = logging.getLogger(__name__)

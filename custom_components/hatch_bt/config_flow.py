@@ -13,7 +13,7 @@ from homeassistant.const import CONF_ADDRESS
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
-from .generic_bt_api.device import HatchBTDevice
+from .hatch_bt_device.device import HatchBTDevice
 
 _LOGGER = logging.getLogger(__name__)
 
