@@ -21,7 +21,7 @@ PLATFORMS = [Platform.SWITCH, Platform.LIGHT, Platform.MEDIA_PLAYER]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Generic BT from a config entry."""
     assert entry.unique_id is not None
-    hass.data.setdefault(DOMAIN, {})
+    hass.data.setdefault(DOMAIN, {}).setdefault(entry.entry_id, {})
     address: str = entry.data[CONF_ADDRESS]
 
     scanner = bluetooth.async_get_scanner(hass)
